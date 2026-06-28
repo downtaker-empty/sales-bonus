@@ -25,13 +25,13 @@ function calculateBonusByProfit(index, total, seller) {
     // @TODO: Расчет бонуса от позиции в рейтинге
     const { profit } = seller;
     
-    if (index == 0) {return 0.15; }
+    if (index == 0) {return profit * 0.15; }
 
-    if ([1, 2].includes(index)) { return 0.1; }
+    if ([1, 2].includes(index)) { return profit * 0.1; }
     
     if(index==total-1){ return 0 ;}
     
-    return 0.05;
+    return profit * 0.05;
 }
 
 /**
@@ -42,11 +42,17 @@ function calculateBonusByProfit(index, total, seller) {
  */
 function analyzeSalesData(data, options) {
     // @TODO: Проверка входных данных
-    if (!data || !data.sellers || !data.products || !data.purchase_records || !data.customers) {
-        throw new Error(`Неполные данные: data=${!!data}, customers=${!!data.customers}, sellers=${!!data.sellers}, products=${!!data.products}, purchase_records=${!!data.purchase_records}`);
+    if (!data || !Array.isArray(data.sellers) || !Array.isArray(data.products) || !Array.isArray(data.purchase_records) || !Array.isArray(data.customers)) {
+        throw new Error(`Неполные данные: data=${!!data}, customers=${!!Array.isArray(data.customers)}, sellers=${!!Array.isArray(data.sellers)}, products=${!!Array.isArray(data.products)}, purchase_records=${!!Array.isArray(data.purchase_records)}`);
     }
     // @TODO: Проверка наличия опций
-    if (!options || typeof options.calculateRevenue !== 'function' || typeof options.calculateBonus !== 'function') {
+    if (typeof options !== 'object' || options === null) {
+        throw new Error('Опции должны быть объектом');
+    }
+
+    const { calculateRevenue, calculateBonus } = options;
+
+    if (!options || typeof calculateRevenue !== 'function' || typeof calculateBonus !== 'function') {
         throw new Error('Опции должны содержать функции calculateRevenue и calculateBonus');
     }
 
@@ -108,7 +114,7 @@ function analyzeSalesData(data, options) {
 
     sellerStats.forEach((seller, index) => {
 
-        seller.bonus = seller.profit * calculateBonusByProfit(index, totalSellers, seller);
+        seller.bonus = calculateBonusByProfit(index, totalSellers, seller);
 
         seller.top_products = Object.entries(seller.products_sold)   
         .map(([sku, quantity]) => ({ sku, quantity }))           
