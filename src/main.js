@@ -29,7 +29,7 @@ function calculateBonusByProfit(index, total, seller) {
 
   if ([1, 2].includes(index)) { return profit * 0.1; }
     
-  if(index==total-1){ return 0 ;}
+  if(index==total-1){ return 0; }
     
   return profit * 0.05;
 }
