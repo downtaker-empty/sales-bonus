@@ -45,6 +45,9 @@ function analyzeSalesData(data, options) {
     if (!data || !Array.isArray(data.sellers) || !Array.isArray(data.products) || !Array.isArray(data.purchase_records) || !Array.isArray(data.customers)) {
         throw new Error(`Неполные данные: data=${!!data}, customers=${!!Array.isArray(data.customers)}, sellers=${!!Array.isArray(data.sellers)}, products=${!!Array.isArray(data.products)}, purchase_records=${!!Array.isArray(data.purchase_records)}`);
     }
+    if ( !!data.customers.length || !!data.sellers.length|| !!data.products.length || !!data.customers.length) {
+        throw new Error(`Заполненные данные: customers=${!!data.customers.length}, sellers=${!!data.sellers.length}, products=${!!data.products.length}, purchase_records=${!!data.purchase_records}`);
+    }
     // @TODO: Проверка наличия опций
     if (typeof options !== 'object' || options === null) {
         throw new Error('Опции должны быть объектом');
